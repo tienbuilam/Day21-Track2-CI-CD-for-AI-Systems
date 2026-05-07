@@ -74,7 +74,7 @@ jobs:
           ACC=$(python -c "import json; d=json.load(open('outputs/metrics.json')); print(d['accuracy'])")
           echo "accuracy=$ACC" >> $GITHUB_OUTPUT
 
-      # Bonus 4: lay metrics cua model dang chay tren S3 de so sanh
+      # Bonus 4: so sanh voi model truoc, huy deploy neu accuracy giam
       - name: Compare with previous model metrics
         run: |
           python - <<'EOF'
@@ -85,12 +85,12 @@ jobs:
           s3 = boto3.client("s3")
           try:
               s3.download_file(bucket, "models/latest/metrics.json", "/tmp/prev_metrics.json")
-              prev = json.load(open("/tmp/prev_metrics.json"))
-              prev_acc = prev.get("accuracy", 0.0)
+              prev_acc = json.load(open("/tmp/prev_metrics.json")).get("accuracy", 0.0)
               curr_acc = json.load(open("outputs/metrics.json"))["accuracy"]
               print(f"Accuracy: truoc={prev_acc:.4f}  moi={curr_acc:.4f}")
               if curr_acc < prev_acc:
-                  print("WARNING: Model moi kem hon model hien tai. Van tiep tuc neu qua eval gate.")
+                  raise SystemExit(f"FAILED: Model moi ({curr_acc:.4f}) kem hon model hien tai ({prev_acc:.4f}). Huy deploy.")
+              print("PASSED: Model moi tot hon hoac bang model hien tai.")
           except ClientError as e:
               if e.response["Error"]["Code"] == "404":
                   print("Chua co model truoc. Bo qua so sanh.")
