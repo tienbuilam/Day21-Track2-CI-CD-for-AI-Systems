@@ -13,3 +13,4 @@ __pycache__/
 .DS_Store
 mlops-lab-user_accessKeys.csv
 .claude/
+mlops-key.pem
