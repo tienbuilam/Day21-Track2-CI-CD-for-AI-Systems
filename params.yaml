@@ -1,4 +1,4 @@
-model_type: lightgbm   # random_forest | gradient_boosting | catboost | xgboost | lightgbm
+model_type: catboost   # random_forest | gradient_boosting | catboost | xgboost | lightgbm
 n_estimators: 200
 max_depth: 10
 min_samples_split: 5
